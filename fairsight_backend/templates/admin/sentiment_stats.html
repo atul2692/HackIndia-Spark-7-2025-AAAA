@@ -1,0 +1,229 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --indigo-500: #6366f1;
+        --indigo-600: #4f46e5;
+        --indigo-700: #4338ca;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --blue-700: #1d4ed8;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --gray-950: #030712;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+    }
+    
+    .stats-container {
+        max-width: 800px;
+        margin: 20px auto;
+        color: #fff;
+    }
+    
+    .summary-card {
+        margin-bottom: 30px;
+        background-color: var(--gray-800);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.4em;
+        color: #fff;
+        background: linear-gradient(to right, var(--indigo-500), var(--blue-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .stat-bar {
+        height: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+    
+    .stat-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        color: var(--gray-300);
+    }
+    
+    .positive-bar {
+        height: 100%;
+        background: linear-gradient(to right, #4ade80, #22c55e);
+        border-radius: 10px;
+    }
+    
+    .neutral-bar {
+        height: 100%;
+        background: linear-gradient(to right, #facc15, #eab308);
+        border-radius: 10px;
+    }
+    
+    .negative-bar {
+        height: 100%;
+        background: linear-gradient(to right, #f87171, #ef4444);
+        border-radius: 10px;
+    }
+    
+    .satisfaction-value {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .satisfaction-bar {
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+        margin: 0 auto;
+        width: 80%;
+    }
+    
+    .satisfaction-progress {
+        height: 100%;
+        border-radius: 15px;
+    }
+    
+    .good {
+        background: linear-gradient(to right, #4ade80, #22c55e);
+    }
+    
+    .needs-improvement {
+        background: linear-gradient(to right, #facc15, #eab308);
+    }
+    
+    .critical {
+        background: linear-gradient(to right, #f87171, #ef4444);
+    }
+    
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(to right, var(--indigo-600), var(--indigo-700));
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .back-button:hover {
+        background: linear-gradient(to right, var(--indigo-700), var(--indigo-800));
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    
+    .page-title {
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 24px;
+        background: linear-gradient(to right, var(--indigo-500), var(--blue-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:api_feedback_changelist' %}">Feedback</a>
+    &rsaquo; Sentiment Statistics
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1 class="page-title">Feedback Sentiment Statistics</h1>
+    
+    <div class="stats-container">
+        <div class="summary-card">
+            <h2 style="text-align: center; margin-bottom: 15px;">Summary</h2>
+            <p style="text-align: center; font-size: 1.1em;">Total Feedback Entries: <strong>{{ feedback_count }}</strong></p>
+        </div>
+        
+        <!-- Sentiment Distribution -->
+        <div class="summary-card">
+            <h3 class="card-title">Sentiment Distribution</h3>
+            
+            <div class="stat-label">
+                <span><strong>Positive:</strong></span>
+                <span>{{ sentiment_stats.positive }}%</span>
+            </div>
+            <div class="stat-bar">
+                <div class="positive-bar" style="width: {{ sentiment_stats.positive }}%;"></div>
+            </div>
+            
+            <div class="stat-label">
+                <span><strong>Neutral:</strong></span>
+                <span>{{ sentiment_stats.neutral }}%</span>
+            </div>
+            <div class="stat-bar">
+                <div class="neutral-bar" style="width: {{ sentiment_stats.neutral }}%;"></div>
+            </div>
+            
+            <div class="stat-label">
+                <span><strong>Negative:</strong></span>
+                <span>{{ sentiment_stats.negative }}%</span>
+            </div>
+            <div class="stat-bar">
+                <div class="negative-bar" style="width: {{ sentiment_stats.negative }}%;"></div>
+            </div>
+        </div>
+        
+        <!-- Overall Sentiment Score -->
+        <div class="summary-card">
+            <h3 class="card-title">Overall Customer Satisfaction</h3>
+            
+            {% with satisfaction=sentiment_stats.positive %}
+                <div>
+                    <div class="satisfaction-value">
+                        {{ satisfaction }}%
+                    </div>
+                    <div class="satisfaction-bar">
+                        <div class="satisfaction-progress 
+                            {% if satisfaction >= 70 %}
+                                good
+                            {% elif satisfaction >= 40 %}
+                                needs-improvement
+                            {% else %}
+                                critical
+                            {% endif %}"
+                            style="width: {{ satisfaction }}%;">
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        {% if satisfaction >= 70 %}
+                            <span style="color: #4ade80; font-weight: bold;">Good</span>
+                        {% elif satisfaction >= 40 %}
+                            <span style="color: #facc15; font-weight: bold;">Needs Improvement</span>
+                        {% else %}
+                            <span style="color: #f87171; font-weight: bold;">Critical</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endwith %}
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{% url 'admin:api_feedback_changelist' %}" class="back-button">Back to Feedback List</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

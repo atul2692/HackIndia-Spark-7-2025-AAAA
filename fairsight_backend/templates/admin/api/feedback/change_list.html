@@ -1,0 +1,35 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .stats-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background: linear-gradient(to right, #4f46e5, #3b82f6);
+        color: white !important;
+        border-radius: 6px;
+        text-decoration: none !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        margin-right: 5px;
+    }
+    
+    .stats-button:hover {
+        background: linear-gradient(to right, #4338ca, #2563eb);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="{% url 'admin:sentiment-stats' %}" class="stats-button">
+      {% trans "View Sentiment Statistics" %}
+    </a>
+  </li>
+  {{ block.super }}
+{% endblock %} 

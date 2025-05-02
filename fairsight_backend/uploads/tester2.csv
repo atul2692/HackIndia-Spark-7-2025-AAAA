@@ -1,0 +1,11 @@
+age,education,gender,approved,income
+25,Bachelor,Female,True,48000
+34,Master,Female,False,52000
+29,High School,Male,True,39000
+45,PhD,Female,True,85000
+31,Bachelor,Female,False,41000
+22,High School,Female,False,30000
+38,Master,Female,True,67000
+41,PhD,Male,True,92000
+27,Bachelor,Female,True,45000
+36,High School,Male,False,38000

@@ -1,0 +1,135 @@
+{% extends "admin/change_list_results.html" %}
+{% load i18n admin_urls %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --indigo-500: #6366f1;
+        --indigo-600: #4f46e5;
+        --indigo-700: #4338ca;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --blue-700: #1d4ed8;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --gray-950: #030712;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+    }
+    
+    .summary-panel {
+        margin-bottom: 20px;
+        background-color: var(--gray-800);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
+    .summary-title {
+        margin-top: 0;
+        margin-bottom: 15px;
+        background: linear-gradient(to right, var(--indigo-500), var(--blue-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.4em;
+        font-weight: bold;
+    }
+    
+    .stats-flex {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .stat-item {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .positive-value {
+        color: #4ade80;
+    }
+    
+    .neutral-value {
+        color: #facc15;
+    }
+    
+    .negative-value {
+        color: #f87171;
+    }
+    
+    .stat-bar-container {
+        width: 100%;
+        height: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+    }
+    
+    .positive-segment {
+        background: linear-gradient(to right, #4ade80, #22c55e);
+    }
+    
+    .neutral-segment {
+        background: linear-gradient(to right, #facc15, #eab308);
+    }
+    
+    .negative-segment {
+        background: linear-gradient(to right, #f87171, #ef4444);
+    }
+    
+    .stats-link {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+        display: block;
+        margin-top: 12px;
+        text-align: right;
+    }
+    
+    .stats-link:hover {
+        color: #818cf8;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block result_list %}
+    {% if sentiment_stats %}
+    <div class="summary-panel">
+        <h3 class="summary-title">Sentiment Summary</h3>
+        <div class="stats-flex">
+            <div class="stat-item">
+                <div class="stat-value positive-value">{{ sentiment_stats.positive }}%</div>
+                <div>Positive</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value neutral-value">{{ sentiment_stats.neutral }}%</div>
+                <div>Neutral</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value negative-value">{{ sentiment_stats.negative }}%</div>
+                <div>Negative</div>
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <div class="stat-bar-container">
+                <div class="positive-segment" style="width: {{ sentiment_stats.positive }}%;"></div>
+                <div class="neutral-segment" style="width: {{ sentiment_stats.neutral }}%;"></div>
+                <div class="negative-segment" style="width: {{ sentiment_stats.negative }}%;"></div>
+            </div>
+        </div>
+        <a href="{% url 'admin:sentiment-stats' %}" class="stats-link">View Detailed Statistics →</a>
+    </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %} 
